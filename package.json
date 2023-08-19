@@ -14,8 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "leap-vscode.helloWorld",
-        "title": "Hello World"
+        "command": "leap-vscode.forwardSearch",
+        "title": "Leap Search Forward"
+      },
+      {
+        "command": "leap-vscode.backwardSearch",
+        "title": "Leap Search Backward"
       }
     ]
   },
