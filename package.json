@@ -20,6 +20,10 @@
       {
         "command": "leap-vscode.backwardSearch",
         "title": "Leap Search Backward"
+      },
+      {
+        "command": "leap-vscode.globalSearch",
+        "title": "Global Leap Search"
       }
     ]
   },

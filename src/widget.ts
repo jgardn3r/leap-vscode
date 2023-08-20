@@ -82,6 +82,7 @@ export class Widget implements vscode.Disposable {
 
         if (matchingRanges.length === 1) {
             let [editor, range] = matchingRanges[0];
+            vscode.window.showTextDocument(editor.document, editor.viewColumn);
             editor.selections = [new vscode.Selection(range.start, range.start)];
             this.dispose();
             return;
@@ -111,7 +112,7 @@ export class Widget implements vscode.Disposable {
     }
 
     private getRelevantTextEditors(): readonly vscode.TextEditor[] {
-        if (SearchOption.allEditors in this.searchOptions) {
+        if (this.searchOptions.has(SearchOption.allEditors)) {
             return vscode.window.visibleTextEditors;
         }
         const activeTextEditor = vscode.window.activeTextEditor;

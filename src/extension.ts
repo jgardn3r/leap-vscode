@@ -10,6 +10,14 @@ export function activate(context: vscode.ExtensionContext) {
         let widget = new Widget(context, new Set([SearchOption.backward]));
         widget.show();
     }));
+    context.subscriptions.push(vscode.commands.registerCommand('leap-vscode.globalSearch', () => {
+        let widget = new Widget(context, new Set([
+            SearchOption.forward,
+            SearchOption.backward,
+            SearchOption.allEditors
+        ]));
+        widget.show();
+    }));
 }
 
 export function deactivate() { }
