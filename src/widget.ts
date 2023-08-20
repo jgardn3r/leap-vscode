@@ -134,12 +134,33 @@ export class Widget implements vscode.Disposable {
             .map(([editor, lineNumber]: [vscode.TextEditor, number]) => [editor, editor.document.lineAt(lineNumber)]);
     }
 
+    private isRelevantRange(
+        searchLabelChars: string,
+        labelChars: string,
+        [editor, range]: [vscode.TextEditor, vscode.Range]
+    ): boolean {
+        if (labelChars.indexOf(searchLabelChars) !== 0) {
+            return false;
+        }
+        if (!this.searchOptions.has(SearchOption.backward)
+            && editor === vscode.window.activeTextEditor
+            && editor.selection.start.isAfter(range.start)) {
+            return false;
+        }
+        if (!this.searchOptions.has(SearchOption.forward)
+            && editor === vscode.window.activeTextEditor
+            && editor.selection.end.isBefore(range.start)) {
+            return false;
+        }
+        return true;
+    }
+
     private getMatchingRanges(searchString: string): [vscode.TextEditor, vscode.Range][] {
         let ranges = [];
         let searchingChars = searchString.substring(0, SEARCH_CHAR_LEN);
         const searchLabelChars = searchString.substring(SEARCH_CHAR_LEN, searchString.length);
         for (const [editor, line] of this.getVisibleLines()) {
-            let lineText = line.text;
+            let lineText = line.text + ' ';
             if (!(SearchOption.caseSensitive in this.searchOptions)) {
                 lineText = lineText.toLowerCase();
             }
@@ -155,21 +176,21 @@ export class Widget implements vscode.Disposable {
 
                 lastPosition = lineText.indexOf(searchingChars, lastPosition + 1);
 
-                if (searchLabelChars !== undefined && labelChars.indexOf(searchLabelChars) !== 0) {
-                    continue;
+                if (this.isRelevantRange(searchLabelChars, labelChars, rangeKey)) {
+                    ranges.push(rangeKey);
                 }
-                if (!this.searchOptions.has(SearchOption.backward)
-                    && editor === vscode.window.activeTextEditor
-                    && editor.selection.start.isAfter(range.start)) {
-                    continue;
-                }
-                if (!this.searchOptions.has(SearchOption.forward)
-                    && editor === vscode.window.activeTextEditor
-                    && editor.selection.end.isBefore(range.start)) {
-                    continue;
-                }
+            }
 
-                ranges.push(rangeKey);
+            if (searchingChars.match(/^ +/)?.length) {
+                const eolRange = new vscode.Range(
+                    new vscode.Position(line.lineNumber, line.text.length),
+                    new vscode.Position(line.lineNumber, line.text.length + 1)
+                );
+                const eolRangeKey = [editor, eolRange] as [vscode.TextEditor, vscode.Range];
+                const labelChars = this.getLabel(eolRangeKey) ?? "";
+                if (this.isRelevantRange(searchLabelChars, labelChars, eolRangeKey)) {
+                    ranges.push(eolRangeKey);
+                }
             }
         }
         return ranges;
