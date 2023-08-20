@@ -26,6 +26,16 @@ export class Widget implements vscode.Disposable {
         this.quickPick.onDidChangeValue(searchString => {
             this.updateLabels(searchString);
         });
+        this.quickPick.onDidAccept(() => {
+            const searchString = this.quickPick.value;
+            const matchingRanges = this.getMatchingRanges(searchString);
+
+            if (searchString.length > 0 && matchingRanges.length > 0) {
+                let [editor, range] = matchingRanges[0];
+                editor.selections = [new vscode.Selection(range.start, range.start)];
+            }
+            this.dispose();
+        });
         this.quickPick.onDidHide(() => {
             this.dispose();
         });
