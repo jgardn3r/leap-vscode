@@ -25,3 +25,6 @@ There are some features of leap.nvim that would do well in this extension. Namel
 * Adding the sets of results and the ability to toggle back and forth with `Space` and `Tab` rather than having to enter two labels
 
 ## Release Notes
+
+## 0.1.0
+Initial version. Implements basic leap functionality.

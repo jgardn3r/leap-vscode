@@ -2,8 +2,10 @@
 
 All notable changes to the "leap-vscode" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
 
+## 0.1.0
 - Initial release
+### Added
+- Forward and backward search in the active editor
+- Added label decorations for searching
