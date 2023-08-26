@@ -8,6 +8,7 @@ All notable changes to the "leap-vscode" extension will be documented in this fi
 - Global search to search across open text editors
 - Ability to match eol with `  ` and characters at eol with `c `
 - Pressing enter will select the first match
+- Support for moving to diff editor labels
 
 ## 0.1.0
 - Initial release
