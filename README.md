@@ -27,5 +27,8 @@ There are some features of leap.nvim that would do well in this extension. Namel
 
 ## Release Notes
 
+## 0.2.0
+Fixes and improvements to streamline the experience.
+
 ## 0.1.0
 Initial version. Implements basic leap functionality.

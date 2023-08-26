@@ -4,6 +4,8 @@ All notable changes to the "leap-vscode" extension will be documented in this fi
 
 ## [Unreleased]
 
+## 0.2.0
+- Fixes and improvements
 ### Added
 - Global search to search across open text editors
 - Ability to match eol with `  ` and characters at eol with `c `
