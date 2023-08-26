@@ -122,7 +122,7 @@ export class Widget implements vscode.Disposable {
         for (const rangeKey of matchingRanges) {
             if (!this.visibleDecorations.has(this.getRangeStringKey(rangeKey))) {
                 const [editor, range] = rangeKey;
-                const decoration = this.createDecoration(this.getLabel(rangeKey, labelLength) ?? "", range.start.character);
+                const decoration = this.createDecoration(this.getLabel(rangeKey, labelLength) ?? "");
                 editor.setDecorations(decoration, [{ range: range }]);
                 this.setVisibleLabel(rangeKey, decoration);
             }
@@ -282,18 +282,17 @@ export class Widget implements vscode.Disposable {
         return label;
     }
 
-    private createDecoration(label: string, position: number): vscode.TextEditorDecorationType {
+    private createDecoration(label: string): vscode.TextEditorDecorationType {
         return vscode.window.createTextEditorDecorationType({
-            after: {
+            before: {
                 contentText: label,
                 color: 'var(--vscode-editor-background)',
                 backgroundColor: 'var(--vscode-editor-foreground)',
                 fontWeight: 'bold',
                 border: '0',
-                fontStyle: `normal;
+                margin: `0 ${SEARCH_CHAR_LEN}ch;
                 position: absolute;
-                left: ${position + SEARCH_CHAR_LEN}ch;
-                top: 0;`
+                `
             }
         });
     }

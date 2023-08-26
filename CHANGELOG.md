@@ -9,6 +9,7 @@ All notable changes to the "leap-vscode" extension will be documented in this fi
 - Ability to match eol with `  ` and characters at eol with `c `
 - Pressing enter will select the first match
 - Support for moving to diff editor labels
+- Improve label presentation to support other labels and indentation types
 
 ## 0.1.0
 - Initial release
