@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 
 const MIN_SEARCH_LEN = 1;
 const SEARCH_CHAR_LEN = 2;
-const MIN_SEARCH_HIGHLIGHT_LEN = 1;
 const LABEL_CONTEXT_SIZE = 4;
 const LABEL_LEN = LABEL_CONTEXT_SIZE - SEARCH_CHAR_LEN;
 
