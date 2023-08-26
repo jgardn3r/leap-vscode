@@ -10,6 +10,7 @@ All notable changes to the "leap-vscode" extension will be documented in this fi
 - Pressing enter will select the first match
 - Support for moving to diff editor labels
 - Improve label presentation to support other labels and indentation types
+- Change casing of search to be `smart`, i.e., insensitive until capital is searched
 
 ## 0.1.0
 - Initial release
