@@ -92,8 +92,16 @@ export class Widget implements vscode.Disposable {
 
         if (matchingRanges.length === 1) {
             let [editor, range] = matchingRanges[0];
-            vscode.window.showTextDocument(editor.document, editor.viewColumn);
-            editor.selections = [new vscode.Selection(range.start, range.start)];
+            if (editor.viewColumn) {
+                vscode.window.showTextDocument(editor.document, editor.viewColumn);
+                editor.selections = [new vscode.Selection(range.start, range.start)];
+            } else {
+                // If the target editors viewColumn is undefined, it could be a diff editor
+                (async () => {
+                    await this.changeToDiffEditor(editor);
+                    editor.selections = [new vscode.Selection(range.start, range.start)];
+                })();
+            }
             this.dispose();
             return;
         }
@@ -117,6 +125,56 @@ export class Widget implements vscode.Disposable {
                 const decoration = this.createDecoration(this.getLabel(rangeKey, labelLength) ?? "", range.start.character);
                 editor.setDecorations(decoration, [{ range: range }]);
                 this.setVisibleLabel(rangeKey, decoration);
+            }
+        }
+    }
+
+    private async changeToDiffEditor(editor: vscode.TextEditor) {
+        type DiffInput = {
+            original: vscode.Uri,
+            modified: vscode.Uri,
+        };
+        const isDiffEditor = (tab: vscode.Tab): boolean => {
+            return tab !== undefined
+                && tab.input !== undefined
+                && tab.input !== null
+                && tab.input.hasOwnProperty('original')
+                && tab.input.hasOwnProperty('modified');
+        };
+        const editorHasDiffInput = (input: DiffInput): boolean => {
+            return input.modified.path === editor.document.uri.path
+                || input.original.path === editor.document.uri.path;
+        };
+        const VIEW_EDITOR_COUNT = vscode.window.tabGroups.all.length;
+        for (const [tabGroup, tab] of
+            vscode.window.tabGroups.all.map(
+                (tabGroup) => [tabGroup, tabGroup.activeTab] as [vscode.TabGroup, vscode.Tab])) {
+            if (!isDiffEditor(tab)) {
+                continue;
+            }
+            const input = tab.input as DiffInput;
+            if (!editorHasDiffInput(input)) {
+                continue;
+            }
+
+            let count = 0;
+            while (vscode.window.tabGroups.activeTabGroup !== tabGroup) {
+                if (count >= VIEW_EDITOR_COUNT) {
+                    // Failed to find to the tab group
+                    return;
+                }
+                await vscode.commands.executeCommand('workbench.action.navigateEditorGroups');
+                count++;
+            }
+            const DIFF_SIDE_COUNT = 3;
+            count = 0;
+            while (JSON.stringify(vscode.window.activeTextEditor?.document.uri) !== JSON.stringify(editor.document.uri)) {
+                if (count >= DIFF_SIDE_COUNT) {
+                    // Failed to find the correct side of diff
+                    return;
+                }
+                await vscode.commands.executeCommand('diffEditor.switchSide');
+                count++;
             }
         }
     }
