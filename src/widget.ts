@@ -10,7 +10,6 @@ export enum SearchOption {
     forward,
     backward,
     allEditors,
-    caseSensitive,
 }
 
 export class Widget implements vscode.Disposable {
@@ -223,13 +222,18 @@ export class Widget implements vscode.Disposable {
         return true;
     }
 
+    private isCaseSensitiveSearch(searchString: string): boolean {
+        return searchString.toLowerCase() !== searchString;
+    }
+
     private getMatchingRanges(searchString: string): [vscode.TextEditor, vscode.Range][] {
         let ranges = [];
         let searchingChars = searchString.substring(0, SEARCH_CHAR_LEN);
-        const searchLabelChars = searchString.substring(SEARCH_CHAR_LEN, searchString.length);
+        let caseSensitiveSearch = this.isCaseSensitiveSearch(searchingChars);
+        const searchLabelChars = searchString.substring(SEARCH_CHAR_LEN, searchString.length).toLowerCase();
         for (const [editor, line] of this.getVisibleLines()) {
             let lineText = line.text + ' ';
-            if (!(SearchOption.caseSensitive in this.searchOptions)) {
+            if (!caseSensitiveSearch) {
                 lineText = lineText.toLowerCase();
             }
 
