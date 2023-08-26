@@ -236,7 +236,8 @@ export class Widget implements vscode.Disposable {
                 lineText = lineText.toLowerCase();
             }
 
-            let lastPosition = lineText.indexOf(searchingChars, 0);
+            const firstCharPos = lineText.length - lineText.trimStart().length;
+            let lastPosition = lineText.indexOf(searchingChars, firstCharPos);
             while (lastPosition >= 0) {
                 const range = new vscode.Range(
                     new vscode.Position(line.lineNumber, lastPosition),
